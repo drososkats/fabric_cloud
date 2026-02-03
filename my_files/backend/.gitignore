@@ -1,0 +1,12 @@
+# files that git should ignore (backend)
+# Ignore sensitive environment variables
+.env
+
+# Ignore heavy dependencies
+node_modules/
+
+# Ignore log files
+npm-debug.log*
+
+# Ignore OS specific files
+.DS_Store
