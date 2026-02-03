@@ -1,0 +1,254 @@
+/* --- GLOBAL THEME: WHITE DASHBOARD & LIGHT GRAY SIDEBAR --- */
+:root {
+  --primary-color: #2c2c2c;       /* Dark Charcoal */
+  
+  /* MAIN CONTENT: Λευκό Φόντο */
+  --secondary-color: #ffffff;     
+  
+  /* CARDS: Λευκές Κάρτες */
+  --card-bg: #ffffff;             
+  
+  /* SIDEBAR COLORS */
+  --sidebar-bg: #f0f0f0;          /* ΑΛΛΑΓΗ: Ανοιχτό Γκρι (Light Gray) */
+  --sidebar-header: #2f2b26;      /* Σκούρο Header (Dark Brown/Black) */
+  --sidebar-active: #e0e0e0;      /* ΑΛΛΑΓΗ: Πιο σκούρο γκρι για το active κουμπί */
+
+  --text-main: #333333;           
+  --text-muted: #666666;          
+  
+  --sidebar-width: 260px;         
+  --sidebar-collapsed: 80px;      
+  --transition-speed: 0.3s;       
+}
+
+/* 1. Basic Setup */
+body {
+  background-color: var(--secondary-color) !important;
+  color: var(--text-main) !important;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+}
+
+#wrapper {
+  display: flex;
+  width: 100%;
+  overflow-x: hidden;
+  transition: all var(--transition-speed);
+  background-color: var(--secondary-color);
+}
+
+/* --- 2. Sidebar Styling (Light Gray) --- */
+#sidebar-wrapper {
+  min-height: 100vh;
+  margin-left: 0;
+  width: var(--sidebar-width);
+  background-color: var(--sidebar-bg) !important; /* Το Γκρι που ζήτησες */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05); 
+  border-right: 1px solid rgba(0,0,0,0.05);
+  transition: all var(--transition-speed);
+  position: fixed;
+  z-index: 1000;
+}
+
+/* Logic για κλειστό sidebar */
+#wrapper.toggled #sidebar-wrapper {
+  width: var(--sidebar-collapsed);
+}
+
+#wrapper.toggled .sidebar-text {
+  display: none;
+}
+
+#wrapper.toggled .list-group-item {
+  text-align: center;
+  padding: 15px 0;
+  justify-content: center;
+}
+
+/* 3. Page Content Wrapper */
+#page-content-wrapper {
+  width: 100%;
+  margin-left: var(--sidebar-width);
+  transition: all var(--transition-speed);
+  background-color: #ffffff !important; /* Λευκό */
+}
+
+#wrapper.toggled #page-content-wrapper {
+  margin-left: var(--sidebar-collapsed);
+}
+
+/* --- Navbar Styling --- */
+.navbar {
+  height: 70px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* 4. Sidebar Elements */
+
+/* HEADER: Το σκούρο κομμάτι πάνω-πάνω */
+.sidebar-heading {
+  background-color: var(--sidebar-header) !important;
+  color: #ffffff;
+  font-weight: 800;
+  padding: 0 20px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Ειδική ρύθμιση για το κουμπί Toggle */
+.sidebar-heading button, .sidebar-heading .hamburger-icon {
+    color: #ffffff !important;
+}
+
+/* LINKS */
+.list-group-item {
+  background-color: transparent !important;
+  color: #333333 !important; /* Μαύρα/Γκρι γράμματα */
+  border: none !important;
+  font-size: 1rem;
+  padding: 15px 25px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+  margin: 4px 10px; 
+  border-radius: 8px; 
+  cursor: pointer;
+}
+
+/* Hover Effect */
+.list-group-item:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important; /* Ελαφρύ γκρι στο hover */
+  color: #000000 !important;
+  transform: translateX(3px);
+}
+
+/* ACTIVE STATE */
+.list-group-item.active {
+  background-color: var(--sidebar-active) !important; /* Το πιο σκούρο γκρι */
+  color: #000000 !important;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.05); /* Εσωτερική σκιά για βάθος */
+  font-weight: bold;
+}
+
+/* 5. Clean White Cards */
+.card {
+  background-color: var(--card-bg) !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+}
+
+.card-header {
+  background-color: transparent !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* 6. Utility Classes */
+.text-primary { color: var(--primary-color) !important; }
+
+.btn-primary {
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+}
+
+/* 7. Mobile Responsiveness */
+@media (max-width: 768px) {
+  #sidebar-wrapper { margin-left: -260px; }
+  #page-content-wrapper { margin-left: 0; }
+  #wrapper.toggled #sidebar-wrapper { margin-left: 0; width: var(--sidebar-width); }
+}
+
+/* --- Animated Hamburger Icon --- */
+.hamburger-icon {
+  width: 30px;
+  height: 20px;
+  position: relative;
+  transform: rotate(0deg);
+  transition: .5s ease-in-out;
+  cursor: pointer;
+}
+
+.hamburger-icon span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 9px;
+  opacity: 1;
+  left: 0;
+  transform: rotate(0deg);
+  transition: .25s ease-in-out;
+}
+
+.hamburger-icon span:nth-child(1) { top: 0px; }
+.hamburger-icon span:nth-child(2) { top: 9px; }
+.hamburger-icon span:nth-child(3) { top: 18px; }
+
+.hamburger-icon.open span:nth-child(1) {
+  top: 9px;
+  transform: rotate(135deg);
+}
+
+.hamburger-icon.open span:nth-child(2) {
+  opacity: 0;
+  left: -60px;
+}
+
+.hamburger-icon.open span:nth-child(3) {
+  top: 9px;
+  transform: rotate(-135deg);
+}
+
+/* Για να είμαστε σίγουροι ότι τα γράμματα μέσα είναι λευκά */
+.card.bg-success h5, .card.bg-success h2,
+.card.bg-danger h5, .card.bg-danger h2 {
+    color: #ffffff !important;
+}
+
+/* --- FIX: ΕΠΙΤΡΕΠΟΥΜΕ ΤΙΣ ΧΡΩΜΑΤΙΣΤΕΣ ΚΑΡΤΕΣ --- */
+.card.text-bg-success {
+  background-color: #198754 !important; /* Πράσινο */
+  color: #ffffff !important;           /* Λευκά γράμματα */
+  border: none !important;             /* Χωρίς περίγραμμα */
+}
+
+.card.text-bg-danger {
+  background-color: #dc3545 !important; /* Κόκκινο */
+  color: #ffffff !important;            /* Λευκά γράμματα */
+  border: none !important;
+}
+
+/* Εξασφαλίζουμε ότι και οι τίτλοι μέσα είναι λευκοί */
+.card.text-bg-success h5, .card.text-bg-success h2,
+.card.text-bg-danger h5, .card.text-bg-danger h2 {
+    color: #ffffff !important;
+}
+
+/* --- FIX: ALLOW BOOTSTRAP COLORS ON HEADERS --- */
+.card-header.bg-success {
+  background-color: #198754 !important; /* Bootstrap Green */
+  color: #ffffff !important;
+}
+
+.card-header.bg-danger {
+  background-color: #dc3545 !important; /* Bootstrap Red */
+  color: #ffffff !important;
+}
+
+.card-header.bg-primary {
+  background-color: #0d6efd !important; /* Bootstrap Blue */
+  color: #ffffff !important;
+}

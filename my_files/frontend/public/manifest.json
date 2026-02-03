@@ -1,0 +1,15 @@
+{
+  "short_name": "Fabric App",
+  "name": "Fabric Warehouse ERP",
+  "icons": [
+    {
+      "src": "icons/fabric-logo.png",
+      "sizes": "32x32 64x64 128x128 192x192 512x512",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+ "theme_color": "#2c2c2c",
+  "background_color": "#e8e4d9"
+}
