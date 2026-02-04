@@ -197,18 +197,18 @@ app.post("/api/products", upload.fields([{ name: "image" }, { name: "invoice" }]
   });
 
 
-// --- start the engine (Cloud Ready) ---
+//start server function
 const startServer = async () => {
   try {
-    // 1. Αρχικοποίηση Cloud Υπηρεσιών
-    await initMinIO(); // Δημιουργεί το bucket στο MinIO
-    const rabbitChannel = await connectRabbitMQ(); // Συνδέεται στον RabbitMQ
+    // define cloud services
+    await initMinIO(); // minIO bucket
+    const rabbitChannel = await connectRabbitMQ(); // connect RabbitMQ
 
-    // 2. Εκκίνηση του Express Server
+    // start server
     app.listen(PORT, () => {
       console.log(`🚀 Fabric ERP is Cloud-Active on port ${PORT}`);
       
-      // Bonus: Στέλνουμε ένα "Startup Message" στον RabbitMQ για να το δει ο καθηγητής στα logs!
+   // RabbitMQ message when start the server
       if (rabbitChannel) {
         const msg = JSON.stringify({ event: "SERVER_START", timestamp: new Date() });
         rabbitChannel.assertQueue('system_logs', { durable: false });
