@@ -11,6 +11,8 @@
   const nodemailer = require("nodemailer");
   require("dotenv").config();
 
+  const { connectRabbitMQ, initMinIO, minioClient } = require('./cloud-services');
+
   //res - response (what return) | req - request (what is coming)
   // models & routes imports
   const authRoute = require("./routes/auth");
@@ -115,15 +117,48 @@ app.post("/api/send-email", async (req, res) => {
     try { res.json(await Product.find()); } catch (err) { res.status(500).json(err); }
   });
 
-  app.post("/api/products", upload.fields([{ name: "image" }, { name: "invoice" }]), async (req, res) => {
-    try {
-      const img = `/uploads/product-images/${req.files["image"][0].filename}`;
-      const inv = req.files["invoice"] ? `/uploads/invoices/${req.files["invoice"][0].filename}` : "";
-      const saved = await new Product({ ...req.body, image: img, invoice: inv }).save();
-      await Notification.create({ message: `New product: ${saved.name}`, type: "success" });
-      res.status(201).json(saved);
-    } catch (err) { res.status(500).json("Error adding product"); }
-  });
+app.post("/api/products", upload.fields([{ name: "image" }, { name: "invoice" }]), async (req, res) => {
+  try {
+    const bucket = process.env.MINIO_BUCKET;
+    let imgUrl = "";
+    let invUrl = "";
+
+    // Ανέβασμα Εικόνας στο MinIO
+    if (req.files["image"]) {
+      const file = req.files["image"][0];
+      const fileName = `img-${Date.now()}-${file.originalname}`;
+      const VM_IP = "192.168.1.5";
+      // Στέλνουμε το αρχείο από το path που το έσωσε το multer στο MinIO
+      await minioClient.fPutObject(bucket, fileName, file.path);
+      imgUrl = `http://${VM_IP}:9000/${bucket}/${fileName}`;
+      fs.unlinkSync(file.path); // Καθαρίζουμε το τοπικό αρχείο
+    }
+
+    // Ανέβασμα Τιμολογίου (Invoice) στο MinIO
+    if (req.files["invoice"]) {
+      const file = req.files["invoice"][0];
+      const fileName = `inv-${Date.now()}-${file.originalname}`;
+      await minioClient.fPutObject(bucket, fileName, file.path);
+      invUrl = `http://${VM_IP}:9000/${bucket}/${fileName}`;
+      fs.unlinkSync(file.path);
+    }
+
+    // Αποθήκευση στη MongoDB με τα νέα Cloud URLs
+    const saved = await new Product({ ...req.body, image: imgUrl, invoice: invUrl }).save();
+    
+    // Ειδοποίηση στον RabbitMQ
+    const rabbitChannel = await connectRabbitMQ();
+    if (rabbitChannel) {
+        const msg = JSON.stringify({ event: "NEW_PRODUCT", name: saved.name });
+        rabbitChannel.sendToQueue('system_logs', Buffer.from(msg));
+    }
+
+    res.status(201).json(saved);
+  } catch (err) { 
+    console.error(err);
+    res.status(500).json("Error with Cloud Upload"); 
+  }
+});
 
   app.put("/api/products/:id", upload.fields([{ name: "image" }, { name: "invoice" }]), async (req, res) => {
     try {
@@ -161,4 +196,30 @@ app.post("/api/send-email", async (req, res) => {
     } catch (err) { res.status(403).send('<h1 style="text-align:center;">Invalid Token</h1>'); }
   });
 
-  app.listen(PORT, () => console.log(`🚀 Server active on port ${PORT}`));
+
+// --- start the engine (Cloud Ready) ---
+const startServer = async () => {
+  try {
+    // 1. Αρχικοποίηση Cloud Υπηρεσιών
+    await initMinIO(); // Δημιουργεί το bucket στο MinIO
+    const rabbitChannel = await connectRabbitMQ(); // Συνδέεται στον RabbitMQ
+
+    // 2. Εκκίνηση του Express Server
+    app.listen(PORT, () => {
+      console.log(`🚀 Fabric ERP is Cloud-Active on port ${PORT}`);
+      
+      // Bonus: Στέλνουμε ένα "Startup Message" στον RabbitMQ για να το δει ο καθηγητής στα logs!
+      if (rabbitChannel) {
+        const msg = JSON.stringify({ event: "SERVER_START", timestamp: new Date() });
+        rabbitChannel.assertQueue('system_logs', { durable: false });
+        rabbitChannel.sendToQueue('system_logs', Buffer.from(msg));
+        console.log("Startup message sent to RabbitMQ (system_logs queue)");
+      }
+    });
+  } catch (err) {
+    console.error("❌ Failed to start the Cloud services:", err);
+    process.exit(1); // Κλείνει το app αν αποτύχει η σύνδεση
+  }
+};
+
+startServer();  
