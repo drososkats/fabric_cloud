@@ -1,58 +1,63 @@
-# Fabric ERP System
+# Cloud-Native Fabric ERP & IoT Warehouse Monitor
 
-A professional Full-Stack Enterprise Resource Planning (ERP) solution designed for textile industries to digitize warehouse operations and inventory management.
+A distributed ERP system for product management featuring a microservices architecture, cloud storage integration, and real-time IoT environmental monitoring.
 
-## 🛠 Implementation Technologies
-This project was developed according to the official specifications using the following stack:
-- **Frontend:** HTML, CSS, Bootstrap, JavaScript, React.
-- **Backend:** Node.js, Express.js, EJS (for dynamic reporting).
-- **Database:** MongoDB (Local Instance): NoSQL database for flexible data storage.
+> **University Project**
+> **Course:** Cloud Platforms
+> **Student:** Katsimpras Drosos
+
+---
+
+## Overview
+
+This project demonstrates the transition from monolithic software to a **Cloud-Native Architecture**. It integrates a React-based ERP frontend with a Node.js backend, orchestrating data flows between Cloud Databases (MongoDB), Object Storage (MinIO), and IoT platforms (ThingsBoard) via an Event-Driven approach using RabbitMQ.
+
+The system simulates a **Smart Warehouse** scenario: When a new product is added to the inventory, the system automatically triggers IoT sensors to monitor the environmental conditions (Temperature/Humidity) of the specific storage shelf.
+
+## System Architecture
+
+The application is deployed on a **MicroK8s Kubernetes Cluster** and consists of the following microservices:
+
+| Service | Technology | Description |
+| :--- | :--- | :--- |
+| **Frontend** | React.js | User Interface for inventory management. |
+| **Backend** | Node.js / Express | REST API handling business logic and storage. |
+| **Database** | MongoDB Atlas | Cloud-hosted NoSQL database for product metadata. |
+| **Object Storage** | MinIO | Local S3-compatible storage for product images. |
+| **Message Broker** | RabbitMQ | Handles asynchronous communication (AMQP). |
+| **IoT Gateway** | Node-RED | Processes events and simulates sensor telemetry. |
+| **Visualization** | ThingsBoard | Professional IoT Dashboard for real-time monitoring. |
+
+---
 
 ## Key Features
-- **Smart Inventory Management:** Complete CRUD (Create, Read, Update, Delete) operations with advanced category filtering.
-- **Dynamic Analytics:** Real-time warehouse health monitoring and distribution charts via Chart.js.
-- **System Notifications:** Instant updates for every product addition, modification, or deletion.
-- **Security & Authentication:** User authentication powered by JWT (JSON Web Tokens) and Bcrypt password hashing.
-- **Automated Reporting:** Secure, PDF-ready inventory reports generated via EJS templates.
 
-## Default Credentials
-To access the system immediately after importing the database, use the following administrator account:
-- **Email:** `default@test.com`
-- **Password:** `98765432`
+* **Microservices Orchestration:** Fully containerized environment using Docker & Kubernetes.
+* **Hybrid Storage Strategy:** Utilizes both Public Cloud (MongoDB Atlas) and Private Cloud (MinIO) storage solutions.
+* **Event-Driven Architecture:** Decoupled communication between the ERP and IoT layers using RabbitMQ.
+* **IoT Simulation:** Node-RED intercepts "New Product" events and generates simulated sensor data (Temperature & Humidity).
+* **Real-Time Dashboard:** ThingsBoard visualizes the stock levels and environmental conditions via MQTT.
 
 ---
 
 ## Installation & Setup
 
-### 1. Prerequisites
-- **Node.js** installed on your machine.
-- **MongoDB Community Server** running locally on default port `27017`.
+### Prerequisites
+* Ubuntu Linux (Native or VM)
+* **MicroK8s** installed and running (addons enabled: `dns`, `storage`, `dashboard`).
+* **Node.js** & **NPM**.
 
+### 1. Clone the Repository
+```bash
+git clone [https://github.com/katsdros/fabric_cloud.git](https://github.com/katsdros/fabric_cloud.git)
+cd fabric_cloud
 
-### 1. Backend Configuration
+### 2. Deploy to Kubernetes 
+```bash
+microk8s kubectl apply -f kubernetes/
 
-1. Open your terminal in the `backend` folder.
-2. Install all required dependencies:
-    ```bash
-   npm install express mongoose cors dotenv multer jsonwebtoken bcrypt nodemailer ejs
-3. Create a `.env` file and add the following variables:
-   ```env
-   PORT=5000
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=FabricErpSecretKey2026!
-3. Run the following command:
-- node server.js
+### Verify Deployment
+```bash
+microk8s kubectl get pods
 
-### 2. Frontend Configuration
-1. Open your terminal in the `frontend` folder.
-2. Install all required dependencies (including Charts and Toasts):
-    ```bash
-    npm install bootstrap react-router-dom react-toastify chart.js react-chartjs-2
-3. Verify that src/config.js points to your backend:
-- export const API_URL = "http://localhost:5000"
-4. Run the following command:
-- npm start
-
-### Developer: Drosos Katsimpras | 2026
-
-- This project was created for educational purposes in the context of Full Stack Web Development.
+## Accessing the Application (Port Forwarding)
