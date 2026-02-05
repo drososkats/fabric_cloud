@@ -67,24 +67,44 @@ microk8s kubectl get pods
 
 To access the services from your local machine (localhost), open separate terminals and run the following port-forwarding commands:
 
-### 1. Backend API (Required for App Logic)
+### 1. Main Applications 
+
+### Backend API (Required for App Logic)
 ```bash
 microk8s kubectl port-forward --address 0.0.0.0 service/fabric-backend-service 5000:5000
 ```
 
-
-### 2. Node-RED (IoT Flow Editor)
+### Node-RED (IoT Flow Editor)
 ```bash
 microk8s kubectl port-forward --address 0.0.0.0 service/nodered-service 1880:1880
 ```
 Access at: http://localhost:1880
 
-### 3. ThingsBoard (IoT Dashboard)
+### ThingsBoard (IoT Dashboard)
 ```bash
 microk8s kubectl port-forward --address 0.0.0.0 service/thingsboard-service 9090:9090
 ```
-Access at: http://localhost:9090
 (Note: The Frontend is accessible via NodePort at http://localhost:30002 or via port-forwarding depending on configuration).
+Access at: http://localhost:9090
+Creds: tenant@thingsboard.org / tenant
+
+---
+
+### 2. Infrastructure & Debugging
+
+### RabbitMQ Management
+```bash
+microk8s kubectl port-forward --address 0.0.0.0 service/rabbitmq-service 15672:15672
+```
+Access: http://localhost:15672
+Creds: guest/guest
+
+### Minio Console
+```bash
+microk8s kubectl port-forward --address 0.0.0.0 service/minio-service 9001:9001
+```
+Access: http://localhost:9001
+Creds: admin/password123
 
 ---
 
