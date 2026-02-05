@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fabric-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fabric-backend
+  template:
+    metadata:
+      labels:
+       app: fabric-backend
+    spec:
+      containers:
+      - name: backend
+        # ΑΛΛΑΓΗ 1: Ζητάμε την έκδοση v2 που περιέχει τα fixes στον κώδικα
+        image: katsdros/fabric-backend:v2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        env:
+        # internal settings
+        - name: PORT
+          value: "5000"
+        - name: RABBITMQ_URI
+          value: "amqp://guest:guest@rabbitmq-service:5672"
+        - name: MINIO_ENDPOINT
+          value: "minio-service"
+        - name: MINIO_PORT
+          value: "9000"
+        - name: MINIO_ACCESS_KEY
+          value: "admin"
+        - name: MINIO_SECRET_KEY
+          value: "password123"
+        
+        # bucket name
+        - name: MINIO_BUCKET
+          value: "products"
+
+        # external access
+        - name: VM_IP
+          value: "192.168.1.5"
+
+        # database
+        - name: MONGO_URI
+          value: "mongodb+srv://drosos_db_user:noo3aoSHj9cHVKdA@clusterfabric.j48pc5f.mongodb.net/fabricDB?retryWrites=true&w=majority"
+        - name: appName
+          value: "ClusterFabric"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabric-backend-service
+spec:
+  selector:
+    app: fabric-backend
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: NodePort

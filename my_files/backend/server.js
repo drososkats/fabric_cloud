@@ -127,7 +127,7 @@ app.post("/api/products", upload.fields([{ name: "image" }, { name: "invoice" }]
     if (req.files["image"]) {
       const file = req.files["image"][0];
       const fileName = `img-${Date.now()}-${file.originalname}`;
-      const VM_IP = "192.168.1.5";
+      const VM_IP = process.env.VM_IP || "192.168.1.5";
       // Στέλνουμε το αρχείο από το path που το έσωσε το multer στο MinIO
       await minioClient.fPutObject(bucket, fileName, file.path);
       imgUrl = `http://${VM_IP}:9000/${bucket}/${fileName}`;
