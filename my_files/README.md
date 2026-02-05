@@ -49,7 +49,7 @@ The application is deployed on a **MicroK8s Kubernetes Cluster** and consists of
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/drososkats/fabric_cloud.git](https://github.com/drososkats/fabric_cloud.git)
+git clone https://github.com/drososkats/fabric_cloud.git
 cd fabric_cloud
 ```
 ### 2. Deploy to Kubernetes 
