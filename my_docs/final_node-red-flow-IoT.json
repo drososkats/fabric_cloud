@@ -1,0 +1,132 @@
+[
+    {
+        "id": "d924453bc34f934f",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "373909d0f2fe6364",
+        "type": "amqp-in",
+        "z": "d924453bc34f934f",
+        "name": "",
+        "broker": "2cef6a6ec38b7375",
+        "prefetch": 0,
+        "noAck": true,
+        "exchangeName": "",
+        "exchangeType": "topic",
+        "exchangeRoutingKey": "",
+        "exchangeDurable": false,
+        "queueName": "system_logs",
+        "queueExclusive": false,
+        "queueDurable": false,
+        "queueAutoDelete": false,
+        "headers": "{}",
+        "x": 400,
+        "y": 380,
+        "wires": [
+            [
+                "90ff1854430dcaef",
+                "9e47ac4fbd978cd6"
+            ]
+        ]
+    },
+    {
+        "id": "90ff1854430dcaef",
+        "type": "debug",
+        "z": "d924453bc34f934f",
+        "name": "debug 21",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "9e47ac4fbd978cd6",
+        "type": "function",
+        "z": "d924453bc34f934f",
+        "name": "function 1",
+        "func": "//take data from rabbitmq\nvar productData = msg.payload; \n\n// create the IoT Payload\n// Simulation for temperature and humidity\nvar temp = (20 + Math.random() * 5).toFixed(1); // temp 20-25\nvar humidity = (40 + Math.random() * 10).toFixed(1); // humidity 40-50\n\n// Αυτό είναι το μήνυμα που θα πάει στο ThingsBoard\nmsg.payload = {\n    \"product\": productData.name,\n    \"new_stock_added\": parseInt(productData.stock),\n    \"temperature\": parseFloat(temp),\n    \"humidity\": parseFloat(humidity),\n    \"status\": \"active\"\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 280,
+        "wires": [
+            [
+                "32c2a8461bf41afa"
+            ]
+        ]
+    },
+    {
+        "id": "32c2a8461bf41afa",
+        "type": "mqtt out",
+        "z": "d924453bc34f934f",
+        "name": "",
+        "topic": "v1/devices/me/telemetry",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "19602726facd0890",
+        "x": 990,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "2cef6a6ec38b7375",
+        "type": "amqp-broker",
+        "name": "New Product Listener",
+        "host": "rabbitmq-service",
+        "port": "5672",
+        "vhost": "",
+        "tls": false,
+        "credsFromSettings": false
+    },
+    {
+        "id": "19602726facd0890",
+        "type": "mqtt-broker",
+        "name": "ThingsBoard Internal",
+        "broker": "thingsboard-service",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
