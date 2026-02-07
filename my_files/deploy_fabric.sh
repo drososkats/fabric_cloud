@@ -6,7 +6,7 @@ echo "📦 Deploying Infrastructure..."
 microk8s kubectl apply -f kubernetes/rabbitmq-deployment.yaml
 microk8s kubectl apply -f kubernetes/minio-deployment.yaml
 microk8s kubectl apply -f kubernetes/nodered-deployment.yaml
-
+microk8s kubectl apply -f kubernetes/thingsboard-deployment.yaml
 # await for 15 seconds
 echo "⏳ Waiting 15s for infrastructure..."
 sleep 15
