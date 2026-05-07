@@ -14,7 +14,6 @@ spec:
     spec:
       containers:
       - name: backend
-        # ΑΛΛΑΓΗ 1: Ζητάμε την έκδοση v2 που περιέχει τα fixes στον κώδικα
         image: katsdros/fabric-backend:v2
         imagePullPolicy: Always
         ports:
